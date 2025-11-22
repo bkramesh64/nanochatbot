@@ -37,4 +37,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 
 # Run with gunicorn for production
 # Model will download on first run (takes ~30 seconds)
-CMD ["gunicorn", "-w", "1", "--threads", "2", "-b", "0.0.0.0:5001", "--timeout", "120", "--preload", "chatbot_backend_claude_1:app"]
+CMD ["gunicorn", "-w", "1", "--threads", "2", "-b", "0.0.0.0:5003", "--timeout", "120", "--preload", "chatbot_backend_claude_1:app"]
