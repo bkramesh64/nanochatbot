@@ -29,11 +29,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY chatbot_backend_claude_1.py .
 
 # Expose port
-EXPOSE 5001
+EXPOSE 5003
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:5001/api/health || exit 1
+    CMD curl -f http://localhost:5003/api/health || exit 1
 
 # Run with gunicorn for production
 # Model will download on first run (takes ~30 seconds)
