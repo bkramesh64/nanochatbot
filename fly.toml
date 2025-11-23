@@ -1,2 +1,7 @@
+app = "nanochatbot-backend"
+
 [build]
   dockerfile = "Dockerfile"
+
+[env]
+  PORT = "5003"
