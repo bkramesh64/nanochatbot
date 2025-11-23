@@ -1,4 +1,4 @@
-app = "nanochatbot-backend"
+app = "nanochatbot"
 
 [build]
   dockerfile = "Dockerfile"
