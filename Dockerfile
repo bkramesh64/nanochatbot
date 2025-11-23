@@ -1,40 +1,28 @@
-# Use Python 3.11 slim image
-FROM python:3.11-slim
+FROM python:3.10-slim
 
-# Set working directory
-WORKDIR /app
-
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    # Prevent tokenizers warning
-    TOKENIZERS_PARALLELISM=false
-
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    curl \
+    git \
+    build-essential \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first (for better caching)
-COPY requirements.txt .
+WORKDIR /app
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+COPY chatbot_backend_claude_1.py /app/chatbot_backend.py
 
-# Copy application code
-COPY chatbot_backend_claude_1.py .
+RUN pip install --no-cache-dir \
+    flask \
+    flask-cors \
+    gunicorn \
+    anthropic \
+    sentence-transformers \
+    scikit-learn \
+    numpy \
+    scipy
 
-# Expose port
+ENV PORT=5003
+ENV ANTHROPIC_API_KEY=""
+
 EXPOSE 5003
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:5003/api/health || exit 1
-
-# Run with gunicorn for production
-# Model will download on first run (takes ~30 seconds)
-CMD ["gunicorn", "-w", "1", "--threads", "2", "-b", "0.0.0.0:5003", "--timeout", "120", "--preload", "chatbot_backend_claude_1:app"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT} chatbot_backend:app"]
